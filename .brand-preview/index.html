@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Funded palette preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #eceae5; color: #211b16; font: 15px/1.5 ui-sans-serif, system-ui, sans-serif; }
+    .topbar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: rgba(247,246,242,.94); border-bottom: 1px solid #d9d5ce; backdrop-filter: blur(10px); }
+    .topbar h1 { margin: 0; font-size: 18px; }
+    .topbar p { margin: 2px 0 0; color: #625d56; font-size: 13px; }
+    button { min-height: 42px; padding: 9px 14px; border: 1px solid #c9c2b7; border-radius: 5px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #53715d; outline-offset: 2px; }
+    .container { width: min(980px, 100%); margin: 0 auto; padding: 24px 20px 64px; display: grid; gap: 20px; }
+    .palette { overflow: hidden; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); color: var(--fg); box-shadow: 0 3px 16px rgba(22,19,15,.07); }
+    .head { display: flex; justify-content: space-between; align-items: start; gap: 16px; padding: 17px 20px 13px; border-bottom: 1px solid var(--border); }
+    .name { margin: 0; font-size: 19px; }
+    .vibe, .meta { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .num { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: 9px; border-radius: 50%; background: var(--primary); color: var(--primary-fg); font: 600 13px ui-monospace, monospace; }
+    .swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); }
+    .swatch { min-width: 0; height: 60px; position: relative; }
+    .swatch span { position: absolute; inset: auto 0 0; padding: 2px; color: white; background: rgba(0,0,0,.52); text-align: center; font: 10px ui-monospace, monospace; }
+    .ui { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; padding: 20px; }
+    .campaign h3 { margin: 0 0 5px; font-size: 20px; }
+    .campaign p { margin: 0 0 12px; color: var(--muted); }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .primary { border-color: var(--primary); background: var(--primary); color: var(--primary-fg); font-weight: 600; }
+    .card { padding: 14px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface); }
+    .label { margin: 0; color: var(--muted); font-size: 11px; text-transform: uppercase; }
+    .amount { margin: 4px 0; font: 600 22px ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .bar { height: 5px; margin: 10px 0; overflow: hidden; border-radius: 9px; background: var(--bar-bg); }
+    .bar span { display: block; width: 64%; height: 100%; background: var(--primary); }
+    .contrast { display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+    .pass { color: #187244; } [data-theme="dark"] .pass { color: #8cdaa7; }
+    .footer { padding: 4px 8px; text-align: center; color: #55504a; font-size: 13px; }
+    @media (max-width: 620px) { .ui { grid-template-columns: 1fr; } .head { align-items: center; } .swatch { height: 48px; } .topbar { padding: 12px 16px; } }
+    @media (prefers-reduced-motion: no-preference) { .palette { transition: background-color 160ms ease, color 160ms ease; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div><h1>Funded palette study</h1><p>Community crowdfunding · minimal · warm</p></div>
+    <button id="theme" type="button" aria-pressed="false">Switch to dark</button>
+  </header>
+  <main class="container" id="palettes"></main>
+  <script>
+    const palettes = [
+      { name: 'Ivory Linen', vibe: 'paper · terracotta · editorial', seed: ['#FAF8F3','#FFFFFF','#9E4C2C','#D58565','#1F1A15'], dark: ['#181512','#211D19','#D99570','#E6B298','#F2ECE5','#C9BFB4'] },
+      { name: 'Peach Comfort', vibe: 'friendly · soft · open', seed: ['#FCF5EC','#FFFFFF','#D96C4A','#EFA487','#241812'], dark: ['#1B1512','#261D19','#F09070','#F4B59C','#F5ECE4','#CBB7AA'] },
+      { name: 'Sand Club', vibe: 'quiet · considered · grounded', seed: ['#F6F2EA','#FFFFFF','#6B5A47','#B8A188','#1F1B14'], dark: ['#171512','#211D18','#C3A27F','#D6B995','#F1ECE3','#C2B7A8'] },
+      { name: 'Cedar Commons', vibe: 'earthy · communal · restrained', seed: ['#F8F6F1','#FFFFFF','#865743','#CBAE9A','#201A16'], dark: ['#171411','#221D19','#D69B7D','#E3BDA8','#F3ECE5','#C7B9AD'] },
+      { name: 'Hearth Paper', vibe: 'warm neutral · focused · human', seed: ['#FAF7F1','#FFFFFF','#765A3E','#C0A27F','#211B15'], dark: ['#191613','#231D19','#D2A77A','#E1C29E','#F2ECE4','#C7B9A8'] },
+      { name: 'Shared Table', vibe: 'olive · neighborly · steady', seed: ['#F7F7F0','#FFFFFF','#5F6745','#A8AF87','#202119'], dark: ['#151712','#20221B','#B8C18D','#D0D8AD','#F0F1E8','#BFC3AD'] }
+    ];
+    const hexToRgb = (hex) => hex.match(/[\da-f]{2}/gi).map((part) => parseInt(part, 16) / 255).map((channel) => channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4);
+    const luminance = (hex) => { const [r, g, b] = hexToRgb(hex); return .2126 * r + .7152 * g + .0722 * b; };
+    const ratio = (a, b) => { const values = [luminance(a), luminance(b)].sort((x, y) => y - x); return ((values[0] + .05) / (values[1] + .05)).toFixed(1); };
+    const root = document.documentElement;
+    const container = document.getElementById('palettes');
+    palettes.forEach((palette, index) => {
+      const [bg, surface, primary, soft, fg] = palette.seed;
+      const [darkBg, darkSurface, darkPrimary, darkSoft, darkFg, darkMuted] = palette.dark;
+      const lightMuted = '#625B53';
+      const primaryFg = ratio('#111111', primary) >= ratio('#FFFFFF', primary) ? '#111111' : '#FFFFFF';
+      const darkPrimaryFg = ratio('#111111', darkPrimary) >= ratio('#FFFFFF', darkPrimary) ? '#111111' : '#FFFFFF';
+      const element = document.createElement('article');
+      element.className = 'palette';
+      element.style.cssText = `--bg:${bg};--surface:${surface};--primary:${primary};--primary-fg:${primaryFg};--fg:${fg};--muted:${lightMuted};--border:${soft};--bar-bg:${soft}66`;
+      element.dataset.light = `--bg:${bg};--surface:${surface};--primary:${primary};--primary-fg:${primaryFg};--fg:${fg};--muted:${lightMuted};--border:${soft};--bar-bg:${soft}66`;
+      element.dataset.dark = `--bg:${darkBg};--surface:${darkSurface};--primary:${darkPrimary};--primary-fg:${darkPrimaryFg};--fg:${darkFg};--muted:${darkMuted};--border:${darkSoft};--bar-bg:${darkSoft}55`;
+      element.innerHTML = `<header class="head"><div><h2 class="name"><span class="num">${index + 1}</span>${palette.name}</h2><p class="vibe">${palette.vibe}</p></div><p class="meta">${palette.seed[2]} accent</p></header><div class="swatches">${palette.seed.map((color) => `<div class="swatch" style="background:${color}"><span>${color}</span></div>`).join('')}</div><section class="ui"><div class="campaign"><h3>Seed Library for the Block</h3><p>Neighbors pooling funds for a shared garden and free weekend workshops.</p><div class="actions"><button class="primary" type="button">Back this campaign</button><button type="button">Campaign details</button></div></div><div class="card"><p class="label">Raised of 8,000 USDC</p><p class="amount">5,120 USDC</p><div class="bar"><span></span></div><p class="label">64% funded · 12 days left</p></div></section><footer class="contrast"><span class="pass">Text / background ${ratio(fg,bg)}:1</span><span class="pass">Button label / accent ${ratio(primaryFg,primary)}:1</span><span class="pass">Accent / background ${ratio(primary,bg)}:1</span></footer>`;
+      container.appendChild(element);
+    });
+    const toggle = document.getElementById('theme');
+    toggle.addEventListener('click', () => {
+      const dark = root.dataset.theme !== 'dark';
+      root.dataset.theme = dark ? 'dark' : 'light';
+      toggle.textContent = dark ? 'Switch to light' : 'Switch to dark';
+      toggle.setAttribute('aria-pressed', String(dark));
+      document.querySelectorAll('.palette').forEach((palette) => { palette.setAttribute('style', dark ? palette.dataset.dark : palette.dataset.light); });
+    });
+  </script>
+</body>
+</html>

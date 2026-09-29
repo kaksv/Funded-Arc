@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Funded typography preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#FCF5EC; --fg:#241812; --surface:#FFFFFF; --primary:#D96C4A; --primary-fg:#FFFFFF; --soft:#EFA487; --muted:#625148; --line:#E7D8CA; --sans:Inter; --mono:'JetBrains Mono'; --serif:'Instrument Serif'; }
+    [data-theme="dark"] { --bg:#1B1512; --fg:#F5ECE4; --surface:#261D19; --primary:#F09070; --primary-fg:#1B1512; --soft:#F4B59C; --muted:#CBB7AA; --line:#4C3A31; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 var(--sans),sans-serif; }
+    .bar { position:sticky; top:0; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 22px; background:color-mix(in srgb,var(--bg) 94%,transparent); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
+    h1 { margin:0; font-size:18px; } .bar p { margin:2px 0 0; color:var(--muted); font-size:13px; }
+    button { min-height:40px; border:1px solid var(--line); border-radius:5px; background:transparent; color:var(--fg); padding:8px 13px; font:inherit; cursor:pointer; }
+    button:focus-visible { outline:3px solid var(--primary); outline-offset:2px; }
+    main { width:min(900px,100%); margin:0 auto; padding:22px 18px 60px; display:grid; gap:15px; }
+    article { padding:20px 22px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    .heading { display:flex; align-items:center; gap:10px; padding-bottom:12px; margin-bottom:16px; border-bottom:1px solid var(--line); }
+    .num { display:grid; place-items:center; flex:none; width:27px; aspect-ratio:1; border-radius:50%; background:var(--primary); color:var(--primary-fg); font:600 13px var(--mono),monospace; }
+    .pair { margin:0; font:600 16px var(--sans),sans-serif; } .fit { margin-left:auto; color:var(--muted); font-size:12px; }
+    .sample { font-family:var(--sans),sans-serif; }
+    .display { margin:0 0 5px; font:500 32px/1.12 var(--serif,var(--sans)),serif; }
+    .project { margin:0 0 5px; font-size:20px; font-weight:600; }
+    .desc { max-width:620px; margin:0 0 16px; color:var(--muted); }
+    .money { display:flex; justify-content:space-between; align-items:center; gap:15px; padding:12px 14px; border:1px solid var(--line); border-radius:5px; }
+    .money small { display:block; color:var(--muted); }
+    .value { font:600 20px var(--mono),monospace; font-variant-numeric:tabular-nums; }
+    .address { color:var(--muted); font:12px var(--mono),monospace; }
+    .cta { background:var(--primary); color:var(--primary-fg); border-color:var(--primary); font-weight:600; white-space:nowrap; }
+    .foot { text-align:center; color:var(--muted); font-size:13px; }
+    @media(max-width:580px) { .bar { padding:12px 14px; } article { padding:16px; } .fit { display:none; } .display { font-size:27px; } .money { align-items:flex-start; flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <header class="bar"><div><h1>Funded typography</h1><p>Peach Comfort · community campaigns</p></div><button id="theme" type="button" aria-pressed="false">Switch to dark</button></header>
+  <main id="pairs"></main>
+  <script>
+    const options = [
+      {name:'DM Sans + DM Mono',sans:'DM Sans',mono:'DM Mono',fit:'warm · human'},
+      {name:'Inter + JetBrains Mono',sans:'Inter',mono:'JetBrains Mono',fit:'neutral · trusted'},
+      {name:'Geist Sans + Geist Mono',sans:'Geist',mono:'Geist Mono',fit:'clean · modern'},
+      {name:'Manrope + JetBrains Mono',sans:'Manrope',mono:'JetBrains Mono',fit:'minimal · precise'},
+      {name:'Instrument Serif + Inter + JetBrains Mono',sans:'Inter',mono:'JetBrains Mono',serif:'Instrument Serif',fit:'editorial · warm'},
+      {name:'Fraunces + Inter + IBM Plex Mono',sans:'Inter',mono:'IBM Plex Mono',serif:'Fraunces',fit:'expressive · creative'}
+    ];
+    document.getElementById('pairs').innerHTML = options.map((font,index) => `<article style="--sans:'${font.sans}';--mono:'${font.mono}';${font.serif ? `--serif:'${font.serif}';` : '--serif:var(--sans);'}"><header class="heading"><span class="num">${index+1}</span><h2 class="pair">${font.name}</h2><span class="fit">${font.fit}</span></header><section class="sample"><p class="display">Good ideas grow together.</p><p class="project">Funded · Back a campaign</p><p class="desc">A neighborhood seed library, built by the people who will use it. Every contribution is visible on Arc.</p><div class="money"><div><small>Raised of 8,000 USDC</small><strong class="value">5,120 USDC</strong><small class="address">0x6B2f…81aD · confirmed</small></div><button class="cta" type="button">Support this project</button></div></section></article>`).join('') + '<p class="foot">Choose 1–6, or say “skip” to use DM Sans + DM Mono.</p>';
+    const theme=document.getElementById('theme');
+    theme.addEventListener('click',()=>{const dark=document.documentElement.dataset.theme!=='dark';document.documentElement.dataset.theme=dark?'dark':'light';theme.textContent=dark?'Switch to light':'Switch to dark';theme.setAttribute('aria-pressed',String(dark));});
+  </script>
+</body>
+</html>
