@@ -21,8 +21,8 @@ export const FundedABI = parseAbi([
   'function registerCampaign(string title,string description,string longDescription,string creatorName,uint256 goalAmount,uint64 deadline,string imageUrl,string category) returns (uint256 campaignId)',
   'function contribute(uint256 campaignId) payable',
   'function finalizeCampaign(uint256 campaignId)',
-  'function withdrawCampaignFunds(uint256 campaignId,address payable recipient)',
-  'function claimRefund(uint256 campaignId,address payable recipient)',
+  'function withdrawCampaignFunds(uint256 campaignId,address recipient)',
+  'function claimRefund(uint256 campaignId,address recipient)',
   'event CampaignCreated(uint256 indexed campaignId,address indexed creator,uint256 goalAmount,uint64 deadline)',
 ] as const);
 
